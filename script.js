@@ -23,6 +23,7 @@ let total=0,
             spending+=+sum[i];
             appData.expenses[expensess[i]] = sum[i];           
         }
+        appData.expensesMonth=spending;
         return spending;
     },
     budget: 0,
@@ -78,11 +79,6 @@ else if(budgetDay <= 0){
 }
 };
 
-
-
-
-
-// console.log(appData.asking());
 console.log('Расходы за месяц:' + expense);
 getTargetMonth();
 console.log(getStatusIncome());
