@@ -10,24 +10,60 @@ let money,
         expenses: {},
         addExpenses: [],
         deposit: false,
+        percentDeposit: 0,
+        moneyDeposit: 0,
         mission: 500000,
         period: 10,
         budget: 0,
         budgetDay: 0,
         budgetMonth: 0,
         expensesMonth: 0,
+        isNumber:  function(n){
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        },
         asking: function(){
-            let addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую'),
+            let addExpenses,
                 spending = 0,
                 sum = [];
+            money = prompt('Ваш месячный доход?');
+            while(!appData.isNumber(money)){
+                money = prompt('Ваш месячный доход?');
+            }
+            appData.budget = money;
+            if(confirm('есть ли у вас дополнительный источник заработка?')){
+                let itemIncome = prompt('Какой у вас дополнительный заработок?');
+                while(appData.isNumber(itemIncome)){
+                    itemIncome = prompt('Какой у вас дополнительный заработок?');
+                }
+                let cashIncome = prompt('Сколько зарабатываете?', 10000);
+                while(!appData.isNumber(cashIncome)){
+                    cashIncome = prompt('Сколько зарабатываете?', 10000);
+                }
+                appData.income[itemIncome]=cashIncome;
+            }
+
+        
+            addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую');
             appData.addExpenses = addExpenses.toLowerCase().split(', ');
+            let i =0;
+            while(i < appData.addExpenses.length){
+                let str = appData.addExpenses[i];
+                str= str.charAt(0).toUpperCase() + str.slice(1);
+                appData.addExpenses[i] = str;
+                i++;
+            }
+            appData.addExpenses = appData.addExpenses.join(', ');
             appData.deposit = confirm("Есть ли у вас депозит в банке?");
             spending = appData.getExpensesMonth();
             for(let i = 0; i<2; i++){
                 
                 expensess[i]=prompt('Введите обязательную статью расходов?');
+                while(appData.isNumber(expensess[i])){
+                    expensess[i]=prompt('Введите обязательную статью расходов?');
+                    
+                }
                 sum[i]=+prompt('Во сколько это обойдется?');
-                while(!isNumber(sum[i])){
+                while(!appData.isNumber(sum[i])){
                     sum[i]=+prompt('Во сколько это обойдется?');
                     
                 }
@@ -73,20 +109,27 @@ let money,
                 return('Что то пошло не так');
             }
         },
+        getinfoDeposit: function() {
+            if(appData.deposit){
+                appData.percentDeposit = prompt('Какой годовой процент?',10);
+                while(!appData.isNumber(appData.percentDeposit)){
+                    appData.percentDeposit =  prompt('Какой годовой процент?',10);
+                }
+
+                appData.moneyDeposit = prompt('Какая сума заложена?',10000);
+                while(!appData.isNumber(appData.moneyDeposit)){
+                    appData.moneyDeposit = prompt('Какая сума заложена?',10000);
+                }
+            }
+        },
+        calcSavedMoney: function() {
+           return appData.budgetMonth * appData.period;
+        }
     };
     
 
-const isNumber = (n) => {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-},
-    start = () => {
-        money = prompt('Ваш месячный доход?');
-        while(!isNumber(money)){
-            money = prompt('Ваш месячный доход?');
-        }
-        appData.budget = money;
-};
-start();
+
+
 appData.asking();
 expense = appData.getExpensesMonth();
 accumulatedMonth = appData.getBudget();
@@ -107,4 +150,8 @@ console.log('expenses: ');
 for(let i in appData.expenses){
     console.log( i + ' : ' + appData.expenses[i]);
 }
+appData.getinfoDeposit();
+console.log(appData.addExpenses);
+
+
 
