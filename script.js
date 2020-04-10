@@ -76,6 +76,9 @@ let startBtn = document.getElementById('start'),
             addExpensesBlock : function(){
                 
                 let cloneExpensesItem = expensesItems[0].cloneNode(true);
+                for(let i = 0 ; i < cloneExpensesItem.childNodes.length;i++ ){
+                    cloneExpensesItem.childNodes[i].value = '';
+                }
                 expensesItems[0].parentNode.insertBefore(cloneExpensesItem, addExpen);
                 expensesItems = document.querySelectorAll('.expenses-items');
                 if(expensesItems.length === 3){
@@ -83,9 +86,12 @@ let startBtn = document.getElementById('start'),
                 }
             },
             addIncomesBlock : function(){
-                console.log(incomeItems[0]);
                 
                 let cloneIncomeItem = incomeItems[0].cloneNode(true);
+                
+                for(let i = 0 ; i < cloneIncomeItem.childNodes.length;i++ ){
+                    cloneIncomeItem.childNodes[i].value = '';
+                }
                 incomeItems[0].parentNode.insertBefore(cloneIncomeItem, addIncome);
                 incomeItems = document.querySelectorAll('.income-items');
                 if(incomeItems.length === 3){
