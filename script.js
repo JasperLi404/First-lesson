@@ -53,6 +53,7 @@ let startBtn = document.getElementById('start'),
             static budget =  0;
             static budgetDay = 0;
             static budgetMonth = 0;
+            static rightSide = [];
             
             
             static isNum(n){
@@ -100,21 +101,44 @@ let startBtn = document.getElementById('start'),
                     targAm.setAttribute('disabled',true);
                 }
             }
-            static start(){
+            static SetCookie(key,value){
+                let cookieStr = key + ' ' + value;
+                console.log(cookieStr);
                 
+                document.cookie = cookieStr;
+            }
+            static putData(){
+                    document.cookie = 'isLoad = true';
+                    localStorage.setItem('budgetMonth',AmountVal.value);
+                    document.cookie = 'budgetMonth = ' + AmountVal.value;
+                    localStorage.setItem('budgetDay',BudDayVal.value);
+                    document.cookie = 'budgetDay = ' + BudDayVal.value;
+                    localStorage.setItem('expensesMonth',ExpenMonthVal.value);
+                    document.cookie = 'expensesMonth = ' + ExpenMonthVal.value;
+                    localStorage.setItem('AddExpenses', AddExpenVal.value);
+                    document.cookie = 'AddExpenses = ' + AddExpenVal.value;
+                    localStorage.setItem('AddIncome', AddIncomeVal.value);
+                    document.cookie = 'AddIncome = ' + AddIncomeVal.value;
+                    localStorage.setItem('targetMonth', TargetMonthVal.value);
+                    document.cookie = 'targetMonth = ' + TargetMonthVal.value;
+                    localStorage.setItem('incomePeriod', IncomePerVal.value); 
+                    document.cookie = 'incomePeriod = ' + IncomePerVal.value;
+
+            }
+            static start(){
                 if(salaryAm.value === ''){
                     alert('Ошибка!Поле " Месячный доход" должно быть заполнено');
                     return;
                 }
-
                 if(salaryAm.value !== ''){
                     startBtn.style.display = 'none';
                     cancelBtn.style.display = 'block';                    
                 }
-                if(!this.isNum(depositPercent.value) || depositPercent.value > 100 || depositPercent.value < 0 ){                    
+                if(depositPercent.style.display === 'block'){
+                    if(!this.isNum(depositPercent.value) || depositPercent.value > 100 || depositPercent.value < 0 ){                    
                     alert('Это не число или  оно не находится в диапазоне от 0 до 100');
                     return;
-                    
+                    }
                 }
                 this.blocked();
                 this.budget = +salaryAm.value;
@@ -124,15 +148,30 @@ let startBtn = document.getElementById('start'),
                 this.getInfoDeposit();
                 accumulatedMonth = this.getBudget();
                 this.showResult();
+                this.putData();
+            }
+            static loading(){
+                if(localStorage.length>0){
+                    startBtn.style.display = 'none';
+                    cancelBtn.style.display = 'block';
+                    this.blocked();
+                    AmountVal.value = localStorage.getItem('budgetMonth');
+                    BudDayVal.value = localStorage.getItem('budgetDay');
+                    ExpenMonthVal.value = localStorage.getItem('expensesMonth');
+                    AddExpenVal.value = localStorage.getItem('AddExpenses');
+                    AddIncomeVal.value = localStorage.getItem('AddIncome');
+                    TargetMonthVal.value = localStorage.getItem('targetMonth');
+                    IncomePerVal.value = localStorage.getItem('incomePeriod') ;    
+                } 
             }
             static showResult(){
-            AmountVal.value = this.budgetMonth;
-            BudDayVal.value = Math.ceil(this.budgetDay);
-            ExpenMonthVal.value = this.expensesMonth;
-            AddExpenVal.value = this.addExpenses.join(', ');
-            AddIncomeVal.value = this.addIncome.join(', ');
-            TargetMonthVal.value = this.getTargetMonth();
-            IncomePerVal.value = this.calcSavedMoney();
+                AmountVal.value = this.budgetMonth;
+                BudDayVal.value = Math.ceil(this.budgetDay);
+                ExpenMonthVal.value = this.expensesMonth;
+                AddExpenVal.value = this.addExpenses.join(', ');
+                AddIncomeVal.value = this.addIncome.join(', ');
+                TargetMonthVal.value = this.getTargetMonth();
+                IncomePerVal.value = this.calcSavedMoney();
             }
             
             static addBlocks(item){
@@ -147,10 +186,7 @@ let startBtn = document.getElementById('start'),
                 if(itemItems.length === 3){
                     item.toElement.style.display = 'none';
                 }
-              
-                
-
-            }
+                        }
             
             static getAdd(){
                 
@@ -266,6 +302,8 @@ let startBtn = document.getElementById('start'),
                 periodAmount.value = '';
                 incomeItems = document.querySelectorAll('.income-items');
                 expensesItems = document.querySelectorAll('.expenses-items');
+                localStorage.clear(); 
+                    
 
                 incomeItems.forEach(function(item){
                     let itemExpenses = item.querySelector('.income-title').value = '';
@@ -359,8 +397,8 @@ let startBtn = document.getElementById('start'),
 
             }
         }
-    // const _this=AppData;
-   AppData.eventListeners();
+AppData.loading();
+AppData.eventListeners();
  
     
     
