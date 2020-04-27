@@ -258,6 +258,7 @@ window.addEventListener('DOMContentLoaded', () => {
         startSlide(1500);
     };
     slider();
+    //on hover change photo
     const changeFace = () => {
             const container = document.querySelector('.command');
             let fff;
@@ -274,14 +275,55 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     };
     changeFace();
+    // in input wrte just numbers
     const writeNum = () => {
         const calcBlock = document.querySelector('.calc-block');
         calcBlock.addEventListener('input', (event) => {
-            if(event.target.matches('.calc-item.calc-square, .calc-item.calc-day, .calc-item.calc-count')){
+            if(event.target.matches('.calc-square, calc-day, .calc-count')){
                 event.value = event.value.replace(/[a-zA-Z]/g, '');
             }
             
         })
     };
     writeNum();
+
+    // calculator
+    const calculator = (price = 100) => {
+        const calcBlock = document.querySelector('.calc-block'),
+             calcType = document.querySelector('.calc-type'),
+             calcSquare = document.querySelector('.calc-square'),
+             calcDay = document.querySelector('.calc-day'),
+             calcCount= document.querySelector('.calc-count'),
+             totalValue = document.getElementById('total');
+        
+        const countSum = () => {
+            let total = 0,
+                countValue = 1,
+                dayValue = 1;
+            const typeValue = +calcType.options[calcType.selectedIndex].value,
+                squareValue = +calcSquare.value;
+                
+            if(calcCount.value > 1){
+                countValue += (calcCount.value - 1) / 10; 
+            }
+            if(calcDay && calcDay.value < 5){
+                dayValue *= 2;
+            } else if(calcDay && calcDay.value < 10){
+                dayValue *= 1.5;
+            }
+            if(typeValue && squareValue){
+                total = price * typeValue * squareValue * countValue * dayValue;
+            }
+            totalValue.textContent = total;
+        }
+
+        calcBlock.addEventListener('change', (event) => {
+            const target = event.target;
+            if(target.matches('select') || target.matches('input')){
+                countSum();                
+            }
+
+        });
+    }
+    calculator(100);
 });
