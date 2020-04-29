@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', () => {
         };
         updateClock();
     };
-    countTimer();
+    // countTimer();
 
     // menu
     const toggleMenu = () => {
@@ -170,9 +170,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         toggletabContent(i);
                     }
                 });
-                    
         }  
-            
             });
     }
     tabs();
@@ -295,11 +293,11 @@ window.addEventListener('DOMContentLoaded', () => {
              calcDay = document.querySelector('.calc-day'),
              calcCount= document.querySelector('.calc-count'),
              totalValue = document.getElementById('total');
-        
         const countSum = () => {
             let total = 0,
                 countValue = 1,
-                dayValue = 1;
+                dayValue = 1,
+                i = 0;
             const typeValue = +calcType.options[calcType.selectedIndex].value,
                 squareValue = +calcSquare.value;
                 
@@ -313,7 +311,8 @@ window.addEventListener('DOMContentLoaded', () => {
             }
             if(typeValue && squareValue){
                 total = price * typeValue * squareValue * countValue * dayValue;
-            }
+            } 
+            
             totalValue.textContent = total;
         }
 
@@ -326,4 +325,69 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
     calculator(100);
+
+    // send ajax form
+    const sendForm = (id) => {
+        const errorMessage  = 'Что то пошло не так...',
+            loadMessage = 'Загрузка...',
+            successMessage = "Спасибо! Мы скорот с Вами свяжемся";
+        const form = document.getElementById(id);
+        const statusMessage = document.createElement('div');
+        form.appendChild(statusMessage);
+        form.addEventListener('input', (event) => {
+            let target = event.target;
+            if(target.className == 'form-phone'){
+                target.value = target.value.replace(/\D/g, '');
+            }
+            if(target.className == 'form-name' || target.className == 'mess'){
+                target.value = target.value.replace(/[a-zA-Z0-9]/g, '');
+            }
+        });
+        form.addEventListener('submit', event => {
+            event.preventDefault();        
+            form.appendChild(statusMessage);
+            const formData = new FormData(form);
+            let body = {};
+            formData.forEach((val,key) => {
+                body[key] = val;
+            });
+            POSTData(body, () => {
+                statusMessage.textContent = successMessage;
+            }, (error) => {
+                console.error(error);
+                statusMessage.textContent = errorMessage;
+            });
+            
+        });
+        const clearInput = () => {
+            const elementsForm = [...form.elements].filter(item => {
+                return item.tagName.toLowerCase() !== 'button' && item.type !== 'button';
+            });
+            elementsForm.forEach(item => item.value = '')
+        }
+        const POSTData = (body, outputData, errorData) => {
+            const request = new XMLHttpRequest();
+            request.addEventListener('readystatechange', () =>{
+                statusMessage.textContent = loadMessage;
+
+                if(request.readyState !== 4){
+                    return;
+                }
+                if(request.status === 200){
+                    outputData();
+                    clearInput();
+                }else{
+                    errorData(request.status);
+                }
+            } );
+            request.open('POST', './server.php');
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(JSON.stringify(body));
+        };
+        
+    }
+    sendForm('form1');
+    sendForm('form2');
+    sendForm('form3');
+
 });
