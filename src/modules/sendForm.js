@@ -12,7 +12,6 @@ const sendForm = (id) => {
         let target = event.target;
         if(target.className == 'form-phone' || target.classList.contains('form-phone')){
             let val = target.value.replace(/(\D|[a-zA-ZА-Яа-я])/g, '');
-            if(val.length>12) val =target.value.replace(/./, '');
             target.value ='+'+ val;
         }
         if(target.classList.contains('form-email')){
