@@ -11,7 +11,8 @@ const sendForm = (id) => {
     form.addEventListener('input', (event) => {
         let target = event.target;
         if(target.className == 'form-phone' || target.classList.contains('form-phone')){
-            const val = target.value.replace(/(\D|[a-zA-ZА-Яа-я])/g, '');
+            let val = target.value.replace(/(\D|[a-zA-ZА-Яа-я])/g, '');
+            if(val.length>12) val =target.value.replace(/./, '');
             target.value ='+'+ val;
         }
         if(target.classList.contains('form-email')){
@@ -22,8 +23,7 @@ const sendForm = (id) => {
         }
     });
     form.querySelector('.form-btn').addEventListener('click', event => {
-        event.preventDefault();        
-        console.log(event.target);
+        event.preventDefault();      
         
         form.appendChild(statusMessage);
         const formData = new FormData(form);
